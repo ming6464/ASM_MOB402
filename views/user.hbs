@@ -10,11 +10,11 @@
 </div>
 <div class="row">
     <nav class="navbar bg-dark">
-        <form class="container-fluid">
+        <form class="container-fluid" onsubmit="event.preventDefault()">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Email"
-                    aria-label="Username" aria-describedby="basic-addon1">
-                <button class="btn btn-outline-light col-3" type="submit">Search</button>
+                <input type="text" class="form-control" id="inputSearch" placeholder="Email" aria-label="Username"
+                    aria-describedby="basic-addon1">
+                <button class="btn btn-outline-light col-3" onclick="search('user')" type="submit">Search</button>
             </div>
         </form>
     </nav>
@@ -30,7 +30,7 @@
                 <th scope="col" colspan="1">Option</th>
             </tr>
         </thead>
-        <tbody id="body_user">
+        <tbody id="tbody">
         </tbody>
     </table>
 </div>

@@ -6,85 +6,6 @@ const app = express();
 const User = require("./User");
 const Product = require("./Product");
 
-let pass, email;
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.engine(
-  "hbs",
-  exhbs.engine({
-    extname: ".hbs",
-    defaultLayout: "main2",
-    layoutsDir: "./views/layouts",
-  })
-);
-app.set("views", "./views");
-app.set("view engine", "hbs");
-app.listen(port, (err) => {
-  if (err) throw err;
-  console.log("Run Port : " + port);
-});
-app.get("/", (req, res) => {
-  res.render("login", { layout: "main", email: null, pass: null });
-});
-
-app.post("/login", (req, res) => {
-  pass = req.body.pass;
-  email = req.body.email;
-  if (checkUser(email, pass)) res.redirect("/home");
-  else res.render("login", { layout: "main", email, pass });
-});
-app.post("/signup", (req, res) => {
-  let email = req.body.email;
-  let pass = req.body.pass;
-  let repass = req.body.repass;
-  let fullName = req.body.fullName;
-  let id = Math.floor(Math.random() * 100).toString();
-  if (pass != repass || !register(id, fullName, email, pass))
-    res.render("signup", { layout: "main", fullName, email, pass });
-  else res.render("login", { layout: "main", email, pass });
-});
-
-app.get("/home/:page", (req, res) => {
-  res.render(req.params.page, { layout: false });
-});
-
-app.get("/home", (req, res) => {
-  res.render("product");
-});
-
-app.get("/get/:field", (req, res) => {
-  let field = req.params.field;
-  switch (field) {
-    case "product":
-      res.json(products);
-      break;
-    case "user":
-      res.json(users);
-      break;
-  }
-});
-
-app.delete("/home/:field/:id", (req, res) => {
-  let id = req.params.id;
-  if (req.params.field == "user") {
-    let index = users.findIndex((e) => e.id == id);
-    if (index == -1) {
-      res.send("false");
-      return;
-    }
-    users.splice(index, 1);
-    res.send("true");
-    return;
-  }
-  let index = products.findIndex((e) => e.id == id);
-  if (index == -1) {
-    res.send("false");
-    return;
-  }
-  products.splice(index, 1);
-  res.send("true");
-});
-
 ///list Data
 let users = [
   new User("1", "Nguyễn Gia Minh", "minh1@gmail.com", "1"),
@@ -96,7 +17,7 @@ let users = [
 let products = [
   new Product(
     "1",
-    "Galaxy S21 FE 5G (6GB/128GB)",
+    "Galaxy S21 FE 5G",
     "10990000.0",
     "ảnh",
     "yellow",
@@ -176,3 +97,103 @@ function register(id = "", fullname = "", email = "", pass = "") {
   return true;
 }
 ///
+
+let pass, email;
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.engine(
+  "hbs",
+  exhbs.engine({
+    extname: ".hbs",
+    defaultLayout: "main2",
+    layoutsDir: "./views/layouts",
+  })
+);
+app.set("views", "./views");
+app.set("view engine", "hbs");
+app.listen(port, (err) => {
+  if (err) throw err;
+  console.log("Run Port : " + port);
+});
+app.get("/", (req, res) => {
+  res.render("login", { layout: "main", email: null, pass: null });
+});
+
+app.post("/login", (req, res) => {
+  pass = req.body.pass;
+  email = req.body.email;
+  if (checkUser(email, pass)) res.redirect("/home");
+  else res.render("login", { layout: "main", email, pass });
+});
+app.post("/signup", (req, res) => {
+  let email = req.body.email;
+  let pass = req.body.pass;
+  let repass = req.body.repass;
+  let fullName = req.body.fullName;
+  let id = Math.floor(Math.random() * 100).toString();
+  if (pass != repass || !register(id, fullName, email, pass))
+    res.render("signup", { layout: "main", fullName, email, pass });
+  else res.render("login", { layout: "main", email, pass });
+});
+
+app.get("/home/:page", (req, res) => {
+  res.render(req.params.page, { layout: false });
+});
+
+app.get("/home", (req, res) => {
+  res.render("product");
+});
+
+app.get("/get/:field", (req, res) => {
+  let field = req.params.field;
+  switch (field) {
+    case "product":
+      res.json(products);
+      break;
+    case "user":
+      res.json(users);
+      break;
+  }
+});
+
+app.delete("/home/:field/:id", (req, res) => {
+  let id = req.params.id;
+  if (req.params.field == "user") {
+    let index = users.findIndex((e) => e.id == id);
+    if (index == -1) {
+      res.send("false");
+      return;
+    }
+    users.splice(index, 1);
+    res.send("true");
+    return;
+  }
+  let index = products.findIndex((e) => e.id == id);
+  if (index == -1) {
+    res.send("false");
+    return;
+  }
+  products.splice(index, 1);
+  res.send("true");
+});
+
+app.get("/search/:field/:value", (req, res) => {
+  let value = req.params.value;
+  let list = [];
+  if (req.params.field == "user") {
+    if (value.length == 0) list = users;
+    else {
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].email.includes(value)) list.push(users[i]);
+      }
+    }
+  } else {
+    if (value.length == 0) list = products;
+    else {
+      for (let i = 0; i < products.length; i++) {
+        if (products[i].name.includes(value)) list.push(products[i]);
+      }
+    }
+  }
+  res.json(list);
+});
