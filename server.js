@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const { extname } = require("path");
 const port = 8099;
 const app = express();
-let isShowHeader = false;
 let data = require("./data");
 let pass, email;
 
@@ -14,7 +13,7 @@ app.engine(
   "hbs",
   exhbs.engine({
     extname: ".hbs",
-    defaultLayout: "main",
+    defaultLayout: "main2",
     layoutsDir: "./views/layouts",
   })
 );
@@ -22,31 +21,34 @@ app.set("views", "./views");
 app.set("view engine", "hbs");
 
 app.get("/", (req, res) => {
-  //res.redirect("/home");
-  res.render("login", { email: null, pass: null });
+  res.render("login", { layout: "main", email: null, pass: null });
 });
 
 app.post("/login", (req, res) => {
-  isShowHeader = false;
   pass = req.body.pass;
   email = req.body.email;
-  if (data.checkAccount(email, pass)) res.redirect("/home");
-  else res.render("login", { email, pass });
+  if (data.checkUser(email, pass)) res.redirect("/home");
+  else res.render("login", { layout: "main", email, pass });
 });
 app.post("/signup", (req, res) => {
   let email = req.body.email;
   let pass = req.body.pass;
   let repass = req.body.repass;
-  let firstName = req.body.firstName;
-  let lastName = req.body.lastName;
-  if (pass != repass || !data.register(email, pass, firstName, lastName))
-    res.render("signup", { email, pass, firstName, lastName });
-  else res.render("login", { email, pass });
+  let fullName = req.body.fullName;
+  if (pass != repass || !data.register(fullName, email, pass))
+    res.render("signup", { layout: "main", fullName, email, pass });
+  else res.render("login", { layout: "main", email, pass });
 });
+
+app.get("/home/:page", (req, res) => {
+  let page = req.params.page;
+  res.render(page, { layout: false });
+});
+
 app.get("/home", (req, res) => {
-  isShowHeader = true;
-  res.render("home", { isShowHeader });
+  res.render("product");
 });
+
 app.listen(port, (err) => {
   if (err) throw err;
   console.log("Run Port : " + port);

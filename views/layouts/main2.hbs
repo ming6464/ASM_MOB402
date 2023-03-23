@@ -1,0 +1,69 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Home</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            />
+        <style>
+            html, body {
+            height: 100%;
+            width: 100%;
+            };
+            body{
+                flex-direction: row;
+            }
+            .red{
+                height: 100%;
+                background-color: aquamarine;
+            }
+            .white{
+                height: 100%;
+                background-color: rgb(26, 127, 215);
+            }
+            
+        </style>
+    </head>
+    <body onload="loadTabActive()">
+        <div class="container-fluid">
+            <div class="row p-1 pb-0" style="height: 100%;">
+                <div class="col-1 pt-2 bg-black"
+                    style="border-top-left-radius:
+                    5px;--bs-bg-opacity : .7">
+                    <span id="header">{{> header}}</span>
+                </div>
+                <div class="col-11" id="content">
+                    {{{body}}}
+                </div>
+            </div>
+        </div>
+        <script
+            src="
+            https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+        </script>
+        <script>
+            let content = document.querySelector('#content');
+            let tabs = document.querySelectorAll('[name = "tab"]');
+            function loadContent(page){
+                fetch(`/home/${page}`).then((res) => res.text()).then((data) => content.innerHTML = data)
+            }
+
+            function loadTabActive(){
+                for(let i = 0; i < tabs.length; i++){
+                    tabs[i].addEventListener('click', () => {
+                        loadContent(tabs[i].getAttribute('value'));
+                        setTabActive(i);
+                    })
+                }
+            }
+
+            function setTabActive(index){
+                tabs.forEach(e => {
+                    e.classList.remove('active');
+                })
+                tabs[index].classList.add('active');
+            }
+        </script>
+    </body>
+</html>

@@ -9,20 +9,17 @@
     <style>
     html, body {
       height: 100%;
+      width: 100%;
     }
     body {
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .nav-tabs-border-width{
-
-    }
   </style>
   </head>
-  <body {{#if isShowHeader}} style="display: block" {{/if}} class="p-2">
+  <body>
     <div class="container-fluid">
-      {{#if isShowHeader}} {{> header}} {{/if}}
       {{{body}}}
     </div>
     <script
