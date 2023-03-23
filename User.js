@@ -1,5 +1,6 @@
 class User {
-  constructor(fullName, email, passwork) {
+  constructor(id, fullName, email, passwork) {
+    this.id = id;
     this.fullName = fullName;
     this.email = email;
     this.passwork = passwork;
