@@ -16,8 +16,8 @@
                     aria-describedby="basic-addon1">
                 <button class="btn btn-outline-light col-2" onclick="search('product')" type="submit"
                     style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;">Search</button>
-                <button type="button" class="btn btn-outline-success col-2 ms-2" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop" style="border-radius: 5px;" onclick="CleanForm()" id='modal'>
+                <button type="button" class="btn btn-outline-success col-2 ms-2" style="border-radius: 5px;"
+                    onclick="CreateItem()" id="modal">
                     New Product
                 </button>
             </div>
@@ -80,7 +80,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveForm('product')">Save</button>
+                <button type="button" class="btn btn-primary" id="saveModal" onclick="saveForm('product')">Save</button>
             </div>
         </div>
     </div>

@@ -220,3 +220,20 @@ app.post("/add/:field", (req, res) => {
   } else check = false;
   res.send(check);
 });
+
+app.post("/edit/:field", (req, res) => {
+  const obj = req.body;
+  const field = req.params.field;
+  let check = true,
+    index = -1;
+  if (field == "user") {
+    index = users.findIndex((e) => e.id == obj.id);
+    if (index == -1) check = false;
+    else users[index] = obj;
+  } else {
+    index = products.findIndex((e) => e.id == obj.id);
+    if (index == -1) check = false;
+    else products[index] = obj;
+  }
+  res.send(check);
+});
