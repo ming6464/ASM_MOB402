@@ -179,20 +179,16 @@ app.delete("/home/:field/:id", (req, res) => {
 
 app.get("/search/:field/:value", (req, res) => {
   let value = req.params.value;
+  value = value.toUpperCase();
   let list = [];
   if (req.params.field == "user") {
-    if (value.length == 0) list = users;
-    else {
-      for (let i = 0; i < users.length; i++) {
-        if (users[i].email.includes(value)) list.push(users[i]);
-      }
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email.toUpperCase().includes(value)) list.push(users[i]);
     }
   } else {
-    if (value.length == 0) list = products;
-    else {
-      for (let i = 0; i < products.length; i++) {
-        if (products[i].name.includes(value)) list.push(products[i]);
-      }
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].name.toUpperCase().includes(value))
+        list.push(products[i]);
     }
   }
   res.json(list);

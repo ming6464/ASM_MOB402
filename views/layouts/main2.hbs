@@ -50,6 +50,7 @@
     <script>
         let isEditClick = false;
         let idClick = 0;
+        let modal;
         const toast = new bootstrap.Toast(document.querySelector('#liveToast'));
         const toastMess = document.querySelector('#toast_mess');
         const toastTitle = document.querySelector('#toast_title');
@@ -162,15 +163,14 @@
                     showModal(field, event.target.closest('tr').querySelectorAll('td'));
                 });
             })
+            modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+                keyboard: false,
+                backdrop: 'static'
+            });
         }
         function CreateItem() {
             CleanForm();
             isEditClick = false;
-            const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
-                keyboard: false,
-                backdrop: 'static'
-            });
-
             modal.show();
         }
 
@@ -260,16 +260,17 @@
                     ShowToast(`${field} ${field}ed`, data);
                     if (isEditClick) editRow(field, obj);
                     else addRow(field, obj);
+                    modal.hide();
 
                 })
                 .catch(error => console.error(error))
         }
 
         function editRow(field, obj) {
-            let tr = querySelector('#tbody').querySelectorAll('tr');
+            let tr = document.querySelectorAll('#tbody tr');
             for (let i = 0; i < tr.length; i++) {
                 if (tr[i].querySelector('td').textContent == idClick) {
-                    let td = tr.querySelectorAll('td');
+                    let td = tr[i].querySelectorAll('td');
                     if (field == 'user') {
                         td[0].innerHTML = obj.id;
                         td[1].innerHTML = obj.fullName;
@@ -278,13 +279,15 @@
                         td[0].innerHTML = obj.id;
                         td[1].innerHTML = obj.name;
                         td[2].innerHTML = obj.price;
-                        td[2].innerHTML = obj.image;
-                        td[2].innerHTML = obj.color;
-                        td[2].innerHTML = obj.category;
+                        td[3].innerHTML = obj.image;
+                        td[4].innerHTML = obj.color;
+                        td[5].innerHTML = obj.category;
                     }
                     break;
                 }
             }
+
+
         }
 
         function addRow(field, obj) {
@@ -347,10 +350,7 @@
                 inputs[1].value = val[2].textContent;
                 inputs[2].value = val[3].textContent;
             }
-            const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
-                keyboard: false,
-                backdrop: 'static'
-            });
+
 
             modal.show();
         }
