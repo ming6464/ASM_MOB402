@@ -72,7 +72,7 @@ let products = [
     "Laptop Gamming"
   ),
 ];
-function getIndex(email = "") {
+function getUserIndex(email = "") {
   for (let i = 0; i < users.length; i++) {
     if (users[i].email == email) return i;
   }
@@ -80,7 +80,7 @@ function getIndex(email = "") {
 }
 
 function checkUser(email = "", pass = "") {
-  let index = getIndex(email);
+  let index = getUserIndex(email);
   if (index == -1 || users[index].passwork != pass) return false;
   return true;
 }
@@ -90,7 +90,7 @@ function register(id = "", fullname = "", email = "", pass = "") {
     email.length == 0 ||
     pass.length == 0 ||
     fullname.length == 0 ||
-    getIndex(email) != -1
+    getUserIndex(email) != -1
   )
     return false;
   users.push(new User(id, fullname, email, pass));
@@ -100,7 +100,7 @@ function register(id = "", fullname = "", email = "", pass = "") {
 
 let pass, email;
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(bodyParser.json());
 app.engine(
   "hbs",
   exhbs.engine({
@@ -196,4 +196,27 @@ app.get("/search/:field/:value", (req, res) => {
     }
   }
   res.json(list);
+});
+
+app.post("/add/:field", (req, res) => {
+  const obj = req.body;
+  const field = req.params.field;
+  let check = false;
+  if (field == "product") {
+    products.push(
+      new Product(
+        obj.id,
+        obj.name,
+        obj.price,
+        obj.category,
+        obj.color,
+        obj.image
+      )
+    );
+    check = true;
+  } else if (getUserIndex(obj.email) == -1) {
+    check = true;
+    users.push(new User(obj.id, obj.fullName, obj.email, obj.passwork));
+  } else check = false;
+  res.send(check);
 });

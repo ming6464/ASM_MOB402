@@ -8,13 +8,18 @@
         </ol>
     </nav>
 </div>
-<div class="row">
+<div class="row p-0" style="display: flex; flex-direction: row;">
     <nav class="navbar bg-dark">
         <form class="container-fluid" onsubmit="event.preventDefault()">
             <div class="input-group">
-                <input type="text" class="form-control" id="inputSearch" placeholder="Email" aria-label="Username"
+                <input type="text" class="form-control" id="inputSearch" placeholder="Name" aria-label="Username"
                     aria-describedby="basic-addon1">
-                <button class="btn btn-outline-light col-3" onclick="search('user')" type="submit">Search</button>
+                <button class="btn btn-outline-light col-2" onclick="search('product')" type="submit"
+                    style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;">Search</button>
+                <button type="button" class="btn btn-outline-success col-2 ms-2" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop" style="border-radius: 5px;" onclick="CleanForm()" id="modal">
+                    New User
+                </button>
             </div>
         </form>
     </nav>
@@ -33,4 +38,40 @@
         <tbody id="tbody">
         </tbody>
     </table>
+</div>
+
+{{!-- modal --}}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">USER</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault()" id='form'>
+                    <div class="mb-3" name='property'>
+                        <label for="exampleInputEmail1" class="form-label">Full Name</label>
+                        <input type="text" required class="form-control" id="exampleInputEmail1" placeholder="Full Name"
+                            aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3" name='property'>
+                        <label for="exampleInputPassword1" class="form-label">Email</label>
+                        <input type="email" required class="form-control" placeholder="Email"
+                            id="exampleInputPassword1">
+                    </div>
+                    <div class="mb-3" name='property'>
+                        <label for="exampleInputPassword1" class="form-label">Passwork</label>
+                        <input type="text" class="form-control" required placeholder="Passwork"
+                            id="exampleInputPassword1">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveForm('user')">Save</button>
+            </div>
+        </div>
+    </div>
 </div>

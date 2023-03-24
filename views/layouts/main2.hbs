@@ -44,6 +44,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -195,6 +196,93 @@
             fetch(`/search/${field}/${value}`).then(res => res.json()).then(data => {
                 showData(field, data);
             });
+        }
+
+        function saveForm(field) {
+            let pro = document.querySelector('#form').querySelectorAll('input');
+            let id = Math.floor(Math.random() * 100);
+            let obj = {};
+            if (field == 'product') {
+                let name, price, category, color, image = 'image';
+                name = pro[0].value;
+                price = pro[1].value;
+                category = pro[2].value;
+                color = pro[3].value;
+                obj = { id, name, price, image, color, category };
+            } else {
+                let fullName, email, passwork;
+                fullName = pro[0].value;
+                email = pro[1].value;
+                passwork = pro[2].value;
+                obj = { id, fullName, email, passwork };
+            }
+            fetch(`/add/${field}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data == 'false') {
+                        ShowToast(`${field} is exist`, data);
+                        return;
+                    }
+                    ShowToast(`${field} added`, data);
+                    let tbody = document.querySelector('#tbody');
+                    let row;
+                    if (field == 'product') {
+                        row = `
+                            <tr>
+                                <td scope="col" colspan="1">${obj.id}</td>
+                                <td scope="col" colspan="2">${obj.name}</td>
+                                <td scope="col" colspan="1">${obj.price}</td>
+                                <td scope="col" colspan="1">${obj.category}</td>
+                                <td scope="col" colspan="1">${obj.color}</td>
+                                <td scope="col" colspan="1">${obj.image}</td>
+                                <td colspan="1">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
+                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        let row_total = tbody.querySelector('#total');
+                        let total = parseFloat(row_total.textContent) + parseFloat(obj[2]);
+                        row_total.parentElement.remove();
+                        let rowTotal = `
+                                <tr>
+                                    <th colspan="3">Total</th>
+                                    <th colspan="5" id = "total">${total}</th>
+                                </tr>`;
+                        row += rowTotal;
+                    } else {
+                        row = `
+                            <tr>
+                                <td scope="row" colspan="1">${obj.id}</td>
+                                <td colspan="2">${obj.fullName}</td>
+                                <td colspan="2">${obj.email}</td>
+                                <td colspan="2">${obj.passwork}</td>
+                                <td colspan="1">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
+                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+
+                    tbody.innerHTML += row;
+
+                })
+                .catch(error => console.error(error))
+        }
+        function CleanForm() {
+            let pro = document.querySelector('#form').querySelectorAll('input');
+            for (let i = 0; i < pro.length; i++) {
+                pro[i].value = null;
+            }
         }
     </script>
 </body>
