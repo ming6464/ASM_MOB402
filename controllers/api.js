@@ -4,7 +4,7 @@ const signIn = (req, res, next) => {
 };
 
 const signUp = (req, res, next) => {
-   console.log("----signUp {api}");
+   res.render("signup", { layout: "main" });
 };
 
 const Home = (req, res, next) => {

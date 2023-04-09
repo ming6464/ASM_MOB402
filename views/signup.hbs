@@ -1,66 +1,38 @@
 <div class="row justify-content-center">
-  <div
-    class="col-11 col-md-6 col-lg-4 p-5 shadow-lg p-5 rounded bg-success-subtle">
+  <div class="col-11 col-md-6 col-lg-4 p-5 shadow-lg p-5 rounded bg-success-subtle">
     <h2 class="text-center fw-bolder">Sign up</h2>
-    <form class="row g-3" action="/signup" method="post">
+    <form class="row g-3" method="POST" action="/users/signup">
       <div class="col-12 mt-4">
         <label for="inputEmail4" class="form-label">Full Name</label>
-        <input
-          type="text"
-          class="form-control bg-secondary-subtle"
-          id="inputEmail4"
-          placeholder="Full Name"
-          name="fullName"
-          {{#if fullName}} value= {{fullName}} {{/if}}
-          />
+        <input type="text" class="form-control bg-secondary-subtle" id="inputEmail4" placeholder="Full Name"
+          name="fullName" />
       </div>
       <div class="col-12 mt-4">
         <label for="inputAddress" class="form-label">Email</label>
-        <input
-          type="email"
-          class="form-control bg-secondary-subtle"
-          id="inputAddress"
-          placeholder="Enter email"
-          name="email"
-          {{#if email}} value= {{email}} {{/if}}
-          />
+        <input type="email" class="form-control bg-secondary-subtle" id="inputAddress" placeholder="Enter email"
+          name="email" />
       </div>
       <div class="col-12 mt-4">
         <label for="inputAddress2" class="form-label">Password</label>
-        <input
-          type="password"
-          class="form-control bg-secondary-subtle"
-          id="inputAddress2"
-          placeholder="Password"
-          name="pass"
-          {{#if pass}} value= {{pass}} {{/if}}
-          />
+        <input type="password" class="form-control bg-secondary-subtle" id="inputAddress2" placeholder="Password"
+          name="password" />
       </div>
       <div class="col-12 mt-4">
         <label for="inputAddress2" class="form-label">Repassword</label>
-        <input
-          type="password"
-          class="form-control bg-secondary-subtle"
-          id="inputAddress2"
-          placeholder="Repassword"
-          name="repass"
-          />
+        <input type="password" class="form-control bg-secondary-subtle" id="inputAddress2" placeholder="Repassword"
+          name="password1" />
       </div>
       <div class="col-12 mt-4">
-        <button type="submit" class="btn btn-primary">Sign up</button>
+        <button type="submit" onclick="HandleActionSignUp()" class="btn btn-primary">Sign up</button>
       </div>
     </form>
+
     <p>
-      <form action="/login" method="post">
-        <span class="mt-2">I have account. Go to </span>
-        <input
-          type="submit"
-          class="fw-semibold mt-2 text-primary-emphasis rounded
-          bg-success-subtle"
-          style="border: 0px; padding: 0px;"
-          value="Log in"
-          />
-      </form>
+    <form action="/" method="get">
+      <span class="mt-2">I have account. Go to </span>
+      <input type="submit" class="fw-semibold mt-2 text-primary-emphasis rounded
+          bg-success-subtle" style="border: 0px; padding: 0px;" value="Sign in" />
+    </form>
     </p>
   </div>
 </div>

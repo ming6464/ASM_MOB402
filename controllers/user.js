@@ -50,19 +50,40 @@ const updateUser = async (req, res, next) => {
 const signUp = async (req, res, next) => {
    console.log("-------signUp{User}");
    const { fullName, email, password, password1 } = req.body;
-   if (password != password1) {
-      console.log("sai pass");
-      return;
+   let check = true;
+   let log = "";
+   if (
+      fullName.length == 0 ||
+      email.length == 0 ||
+      password.length == 0 ||
+      password1.length == 0
+   ) {
+      log = "trống";
+      check = false;
+   } else if (password != password1) {
+      log = "sai pass";
+      check = false;
    }
-   var newUser = new User({
-      fullName,
-      email,
-      password,
+   let tk = await User.findOne({ email: email }).lean().exec();
+   if (tk) {
+      log = "tài khoản đã tồn tại";
+      check = false;
+   }
+
+   if (!check) {
+      console.log(log, fullName, email, password, password1);
+      return res.redirect("/signup");
+   }
+
+   let newUser = new User({
+      fullName: fullName,
+      email: email,
+      password: password,
    });
    // save the user
    await newUser.save();
    console.log(newUser);
-   res.send("success signUp user");
+   res.redirect("/");
 };
 
 const signIn = async (req, res, next) => {
