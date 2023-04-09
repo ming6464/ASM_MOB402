@@ -14,10 +14,10 @@
             <div class="input-group">
                 <input type="text" class="form-control" id="inputSearch" placeholder="Name" aria-label="Username"
                     aria-describedby="basic-addon1">
-                <button class="btn btn-outline-light col-2" onclick="search('product')" type="submit"
+                <button class="btn btn-outline-light col-2" onclick="search('products')" type="submit"
                     style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;">Search</button>
                 <button type="button" class="btn btn-outline-success col-2 ms-2" style="border-radius: 5px;"
-                    onclick="CreateItem()" id="modal">
+                    onclick="handleButtonCreate()" id="modal">
                     New Product
                 </button>
             </div>
@@ -38,6 +38,24 @@
             </tr>
         </thead>
         <tbody id="tbody">
+            {{#each products}}
+            <tr id={{this._id}}>
+                <td scope="col" colspan="1">{{@index}}</td>
+                <td scope="col" colspan="2">{{this.name}}</td>
+                <td scope="col" colspan="1">{{this.price}}</td>
+                <td scope="col" colspan="1">{{this.category}}</td>
+                <td scope="col" colspan="1">{{this.color}}</td>
+                <td scope="col" colspan="1">{{this.image}}</td>
+                <td colspan="1">
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" name="edit" onclick="handleButtonUpdate('products',`{{this._id}}`) "
+                            class="btn btn-outline-dark">Edit</button>
+                        <button type="button" name="delete" onclick="handleButtonDelete('products',`{{this._id}}`)"
+                            class="btn btn-outline-danger">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>
@@ -55,32 +73,35 @@
                 <form onsubmit="event.preventDefault()" id='form'>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputEmail1" class="form-label">Name</label>
-                        <input type="text" required class="form-control" id="exampleInputEmail1"
-                            placeholder="Name Product" aria-describedby="emailHelp">
+                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Name Product"
+                            name="name" aria-describedby="emailHelp">
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">Price</label>
-                        <input type="number" required class="form-control" placeholder="Price" min="0"
+                        <input type="number" class="form-control" name="price" placeholder="Price" min="0"
                             id="exampleInputPassword1">
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">Category</label>
-                        <input type="text" required class="form-control" placeholder="Category"
+                        <input type="text" class="form-control" name="category" placeholder="Category"
                             id="exampleInputPassword1">
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">Color</label>
-                        <input type="text" required class="form-control" placeholder="Color" id="exampleInputPassword1">
+                        <input type="text" class="form-control" name="color" placeholder="Color"
+                            id="exampleInputPassword1">
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">File Image</label>
-                        <input type="file" class="form-control" accept="image/*" min="0" id="exampleInputPassword1">
+                        <input type="file" class="form-control" name="file" accept="image/*" min="0"
+                            id="exampleInputPassword1">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveModal" onclick="saveForm('product')">Save</button>
+                <button type="button" class="btn btn-primary" id="saveModal"
+                    onclick="handleButtonSave('products')">Save</button>
             </div>
         </div>
     </div>

@@ -48,82 +48,29 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let isEditClick = false;
-        let idClick = 0;
+        let isUpdateClick = false;
+        let id_click = 'z';
         let modal;
         const toast = new bootstrap.Toast(document.querySelector('#liveToast'));
         const toastMess = document.querySelector('#toast_mess');
         const toastTitle = document.querySelector('#toast_title');
         let content = document.querySelector('#content');
         let tabs = document.querySelectorAll('[name = "tab"]');
+        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        const nameRegex = /^[A-Za-z ]+$/;
         function handleOnload() {
             loadTabActive();
-            loadContent('product');
+            loadContent('products');
         }
 
         function loadContent(field) {
-            fetch(`/home/${field}`).then((res) => res.text()).then((data) => {
+            fetch(`/${field}`).then((res) => res.text()).then((data) => {
                 content.innerHTML = data;
-                loadList(field);
+                modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+                    keyboard: false,
+                    backdrop: 'static'
+                });
             });
-        }
-
-        function loadList(field) {
-            fetch(`/get/${field}`).then(res => res.json()).then(data => showData(field, data))
-        }
-
-        function showData(field, list) {
-            if (field != 'product' && field != 'user') return;
-            let row = '', total = 0, tbody = document.querySelector('#tbody');
-            cleanRow();
-            switch (field) {
-                case 'product':
-                    list.forEach(e => {
-                        row = `
-                            <tr>
-                                <td scope="col" colspan="1">${e.id}</td>
-                                <td scope="col" colspan="2">${e.name}</td>
-                                <td scope="col" colspan="1">${e.price}</td>
-                                <td scope="col" colspan="1">${e.image}</td>
-                                <td scope="col" colspan="1">${e.color}</td>
-                                <td scope="col" colspan="1">${e.category}</td>
-                                <td colspan="1">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
-                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>`;
-                        tbody.innerHTML += row;
-                        total += parseFloat(e.price);
-                    })
-                    let rowTotal = `
-                                <tr>
-                                    <th colspan="3">Total</th>
-                                    <th colspan="5" id = "total">${total}</th>
-                                </tr>`;
-                    tbody.innerHTML += rowTotal;
-                    break;
-                case 'user':
-                    list.forEach(e => {
-                        row = `
-                            <tr>
-                                <td scope="row" colspan="1">${e.id}</td>
-                                <td colspan="2">${e.fullName}</td>
-                                <td colspan="2">${e.email}</td>
-                                <td colspan="2">${e.passwork}</td>
-                                <td colspan="1">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
-                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>`;
-                        tbody.innerHTML += row;
-                    })
-                    break;
-            }
-            addEventClickButtons(field);
         }
 
         function cleanRow() {
@@ -134,44 +81,76 @@
             }
         }
 
-        function addEventClickButtons(field) {
-            if (field != 'product' && field != 'user') return;
-            let editButtons = document.querySelectorAll('[name = "edit"]');
-            let deleteButtons = document.querySelectorAll('[name = "delete"]');
-            deleteButtons.forEach(btn => {
-                btn.addEventListener('click', event => {
-                    const tr = event.target.closest('tr');
-                    const id = tr.querySelector('td').textContent;
-                    fetch(`/home/${field}/${id}`, { method: 'delete' }).then(res => res.text()).then(data => {
-                        let mess = field;
-                        if (data == "false") mess += " not found!";
-                        else mess += " Deleted!";
-                        ShowToast(mess, data);
-                        if (field == 'product') {
-                            let totalElement = document.querySelector('#total');
-                            let total = parseFloat(totalElement.textContent);
-                            let price = parseFloat(tr.querySelectorAll('td')[2].textContent);
-                            totalElement.innerHTML = total - price;
-                        }
-                        tr.remove();
-                    })
-                });
-            })
-            editButtons.forEach(btn => {
-                btn.addEventListener('click', (event) => {
-                    isEditClick = true;
-                    showModal(field, event.target.closest('tr').querySelectorAll('td'));
-                });
-            })
-            modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
-                keyboard: false,
-                backdrop: 'static'
-            });
+        function handleButtonDelete(field, id) {
+            console.log(`/${field}/option/${id}`);
+            fetch(`/${field}/option/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => res.text).then(data => loadContent(`${field}`));
         }
-        function CreateItem() {
-            CleanForm();
-            isEditClick = false;
+        function handleButtonUpdate(field, id) {
+            console.log(field, id);
+            let inputs = document.querySelector('#form').querySelectorAll('input');
+            let tds = document.getElementById(id).querySelectorAll('td');
+            if (field == "users") {
+                inputs[0].value = tds[1].textContent;
+                inputs[1].value = tds[2].textContent;
+                inputs[2].value = tds[3].textContent;
+            } else {
+                inputs[0].value = tds[1].textContent;
+                inputs[1].value = parseInt(tds[2].textContent);
+                inputs[2].value = tds[5].textContent;
+                inputs[3].value = tds[4].textContent;
+            }
             modal.show();
+            isUpdateClick = true;
+            id_click = id;
+        }
+
+        function handleButtonCreate() {
+            CleanForm();
+            isUpdateClick = false;
+            modal.show();
+        }
+
+        function handleButtonSave(field) {
+            const inputs = document.querySelectorAll('#form div input')
+            let obj = {};
+            let check = true;
+            inputs.forEach(input => {
+                let name = input.name;
+                if (name != "file") {
+                    let value = input.value;
+                    if (value.length == 0) {
+                        ShowToast("Thông tin không được để trống", false);
+                        check = false;
+                    }
+                    if (name == "name" || name == "fullName" && !nameRegex.test(value)) {
+                        ShowToast("Tên không chính xác !", false);
+                        check = false;
+                    }
+                    if (name == "email" && !emailRegex.test(value)) {
+                        ShowToast("Email không đúng", false);
+                        check = false;
+                    }
+                    obj[name] = input.value;
+                }
+            })
+            if (check) {
+                fetch(`/${field}/option/${id_click}`, {
+                    method: isUpdateClick ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(obj)
+                }).then(res => res.text).then(data => {
+                    ShowToast("Thành công", true);
+                    loadContent(`${field}`);
+                });
+                modal.hide();
+            }
         }
 
         function loadTabActive() {
@@ -203,15 +182,21 @@
                 toast.show();
             }
         }
+
         function search(field) {
-            let value = document.querySelector('#inputSearch').value;
+            const value = document.querySelector('#inputSearch').value;
             if (value.length == 0) {
-                loadList(field);
-                return;
+                loadContent(field);
+            } else {
+                fetch(`/${field}/search/${value}`).then(res => res.text()).then(data => {
+                    content.innerHTML = data;
+                    modal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+                        keyboard: false,
+                        backdrop: 'static'
+                    });
+                });
             }
-            fetch(`/search/${field}/${value}`).then(res => res.json()).then(data => {
-                showData(field, data);
-            });
+
         }
 
 
@@ -221,51 +206,6 @@
                 pro[i].value = null;
             }
         }
-        function saveForm(field) {
-            let pro = document.querySelector('#form').querySelectorAll('input');
-            let id = Math.floor(Math.random() * 100);
-            let obj = {};
-            if (field == 'product') {
-                let name, price, category, color, image = 'image';
-                name = pro[0].value;
-                price = pro[1].value;
-                category = pro[2].value;
-                color = pro[3].value;
-                obj = { id, name, price, image, color, category };
-            } else {
-                let fullName, email, passwork;
-                fullName = pro[0].value;
-                email = pro[1].value;
-                passwork = pro[2].value;
-                obj = { id, fullName, email, passwork };
-            }
-            let name = 'add';
-            if (isEditClick) {
-                name = 'edit';
-                obj.id = idClick;
-            }
-            fetch(`/${name}/${field}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(obj)
-            })
-                .then(response => response.text())
-                .then(data => {
-                    if (data == 'false') {
-                        ShowToast(`${field} is exist`, data);
-                        return;
-                    }
-                    ShowToast(`${field} ${field}ed`, data);
-                    if (isEditClick) editRow(field, obj);
-                    else addRow(field, obj);
-                    modal.hide();
-
-                })
-                .catch(error => console.error(error))
-        }
-
         function editRow(field, obj) {
             let tr = document.querySelectorAll('#tbody tr');
             for (let i = 0; i < tr.length; i++) {
@@ -290,52 +230,6 @@
 
         }
 
-        function addRow(field, obj) {
-            let tbody = document.querySelector('#tbody');
-            let row;
-            if (field == 'product') {
-                row = `
-                            <tr>
-                                <td scope="col" colspan="1">${obj.id}</td>
-                                <td scope="col" colspan="2">${obj.name}</td>
-                                <td scope="col" colspan="1">${obj.price}</td>
-                                <td scope="col" colspan="1">${obj.category}</td>
-                                <td scope="col" colspan="1">${obj.color}</td>
-                                <td scope="col" colspan="1">${obj.image}</td>
-                                <td colspan="1">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
-                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>`;
-                let row_total = tbody.querySelector('#total');
-                let total = parseFloat(row_total.textContent) + parseFloat(obj[2]);
-                row_total.parentElement.remove();
-                let rowTotal = `
-                                <tr>
-                                    <th colspan="3">Total</th>
-                                    <th colspan="5" id = "total">${total}</th>
-                                </tr>`;
-                row += rowTotal;
-            } else {
-                row = `
-                            <tr>
-                                <td scope="row" colspan="1">${obj.id}</td>
-                                <td colspan="2">${obj.fullName}</td>
-                                <td colspan="2">${obj.email}</td>
-                                <td colspan="2">${obj.passwork}</td>
-                                <td colspan="1">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" name = "edit" class="btn btn-outline-dark">Edit</button>
-                                    <button type="button" name = "delete" class="btn btn-outline-danger">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>`;
-            }
-
-            tbody.innerHTML += row;
-        }
         function showModal(field, val) {
             let inputs = document.querySelector('#form').querySelectorAll('input');
             if (field == 'product') {
@@ -350,8 +244,6 @@
                 inputs[1].value = val[2].textContent;
                 inputs[2].value = val[3].textContent;
             }
-
-
             modal.show();
         }
     </script>

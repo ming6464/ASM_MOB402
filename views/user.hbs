@@ -14,10 +14,10 @@
             <div class="input-group">
                 <input type="text" class="form-control" id="inputSearch" placeholder="Name" aria-label="Username"
                     aria-describedby="basic-addon1">
-                <button class="btn btn-outline-light col-2" onclick="search('user')" type="submit"
-                    style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;" oncli>Search</button>
+                <button class="btn btn-outline-light col-2" onclick="search('users')" type="submit"
+                    style="border-top-right-radius: 5px; border-bottom-right-radius: 5px;">Search</button>
                 <button type="button" class="btn btn-outline-success col-2 ms-2" style="border-radius: 5px;"
-                    onclick="CreateItem()" id="modal">
+                    onclick="handleButtonCreate()" id="modal">
                     New User
                 </button>
             </div>
@@ -36,6 +36,22 @@
             </tr>
         </thead>
         <tbody id="tbody">
+            {{#each users}}
+            <tr id={{this._id}}>
+                <td scope="row" colspan="1">{{@index}}</td>
+                <td colspan="2">{{this.fullName}}</td>
+                <td colspan="2">{{this.email}}</td>
+                <td colspan="2">{{this.password}}</td>
+                <td colspan="1">
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" name="edit" onclick="handleButtonUpdate('users',`{{this._id}}`)"
+                            class="btn btn-outline-dark">Edit</button>
+                        <button type="button" name="delete" onclick="handleButtonDelete('users',`{{this._id}}`)"
+                            class="btn btn-outline-danger">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>
@@ -53,24 +69,25 @@
                 <form onsubmit="event.preventDefault()" id='form'>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputEmail1" class="form-label">Full Name</label>
-                        <input type="text" required class="form-control" id="exampleInputEmail1" placeholder="Full Name"
-                            aria-describedby="emailHelp">
+                        <input type="text" required class="form-control" id="exampleInputEmail1" name="fullName"
+                            placeholder="Full Name" aria-describedby="emailHelp">
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">Email</label>
-                        <input type="email" required class="form-control" placeholder="Email"
-                            id="exampleInputPassword1">
+                        <input type="email" required class="form-control" name="email" placeholder="Email"
+                            id="exampleInputPassword1" required>
                     </div>
                     <div class="mb-3" name='property'>
                         <label for="exampleInputPassword1" class="form-label">Passwork</label>
-                        <input type="text" class="form-control" required placeholder="Passwork"
+                        <input type="text" class="form-control" name="password" placeholder="Passwork"
                             id="exampleInputPassword1">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveModal" onclick="saveForm('user')">Save</button>
+                <button type="button" class="btn btn-primary" onclick="handleButtonSave('users')"
+                    id="saveModal">Save</button>
             </div>
         </div>
     </div>
