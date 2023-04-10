@@ -6,8 +6,9 @@ const app = express();
 const userRouter = require("./routers/user");
 const apiRouter = require("./routers/api");
 const productRouter = require("./routers/product");
+const cookieParser = require("cookie-parser");
 
-let pass, email;
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.engine(

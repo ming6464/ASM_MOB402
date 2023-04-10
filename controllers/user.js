@@ -1,5 +1,6 @@
 const User = require("./../models/user");
-const { validateBody, schemas } = require("./../helpers/routerHelper");
+const jwt = require("jsonwebtoken");
+const { JWT_SCERET } = require("../configs/index");
 const getAllUser = async (req, res, next) => {
    console.log("---getAllUser");
    const users = await User.find({}).lean().exec();
@@ -89,13 +90,25 @@ const signUp = async (req, res, next) => {
 const signIn = async (req, res, next) => {
    console.log("-------signIn{User}");
    const { email, password } = req.body;
-   const user = await User.findOne({ email: email, password: password });
-   if (!user) {
-      res.redirect("/");
+   console.log(email, password);
+   let user1 = await User.findOne({ email: email, password: password });
+   if (!user1) {
+      res.redirect("/signin");
+      console.log("hello1");
       return;
    }
-   res.redirect("/home");
+   try {
+      let token = jwt.sign({ id: user1._id }, JWT_SCERET);
+      console.log("token", token);
+      res.cookie("token_402", token, {
+         maxAge: 900000,
+         httpOnly: true,
+      });
+   } catch (error) {}
+   console.log("hello2");
+   res.redirect("/");
 };
+
 module.exports = {
    getAllUser,
    createUser,

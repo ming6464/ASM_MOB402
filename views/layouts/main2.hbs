@@ -127,7 +127,8 @@
                         ShowToast("Thông tin không được để trống", false);
                         check = false;
                     }
-                    if (name == "name" || name == "fullName" && !nameRegex.test(value)) {
+                    console.log("name", name, "value", value);
+                    if ((name == "name" || name == "fullName") && !nameRegex.test(value)) {
                         ShowToast("Tên không chính xác !", false);
                         check = false;
                     }
@@ -156,8 +157,12 @@
         function loadTabActive() {
             for (let i = 0; i < tabs.length; i++) {
                 tabs[i].addEventListener('click', () => {
-                    loadContent(tabs[i].getAttribute('value'));
-                    setTabActive(i);
+                    let value = tabs[i].getAttribute('value');
+                    if (value != "logout") {
+                        loadContent(value);
+                        setTabActive(i);
+                    }
+
                 })
             }
         }
@@ -171,7 +176,7 @@
 
         function ShowToast(mess, isCorrect) {
             if (toast) {
-                if (isCorrect == 'true') {
+                if (isCorrect) {
                     toastTitle.classList.remove('bg-danger');
                     toastTitle.classList.add('bg-success');
                 } else {
